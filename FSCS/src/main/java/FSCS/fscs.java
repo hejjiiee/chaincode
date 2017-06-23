@@ -21,7 +21,9 @@ import org.hyperledger.java.shim.ChaincodeStub;
 import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.Field;
 import it.unisa.dia.gas.jpbc.Pairing;
+import it.unisa.dia.gas.jpbc.PairingParameters;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
+import it.unisa.dia.gas.plaf.jpbc.pairing.a.TypeACurveGenerator;
 
 public class fscs extends ChaincodeBase {
 
@@ -80,8 +82,13 @@ public class fscs extends ChaincodeBase {
 	}
 	public String init(ChaincodeStub stub, String[] args)
 	 {
-		 pairing= PairingFactory.getPairing("a.properties");//从文件a.properties中读取参数初始化双线性群
-		 G = pairing.getG1();//群G
+		//pairing= PairingFactory.getPairing("a.properties");//从文件a.properties中读取参数初始化双线性群
+		 int rBit = 159;
+		int qBit = 107;
+		TypeACurveGenerator pg = new TypeACurveGenerator(rBit, qBit);
+		PairingParameters typeAParams = pg.generate();
+		Pairing pairing = PairingFactory.getPairing(typeAParams);
+		G = pairing.getG1();//群G
 		 GT = pairing.getGT();//群GT
 		 Zr = pairing.getZr();//Zq
 		 P = G.newRandomElement().getImmutable();//获取生成元P
